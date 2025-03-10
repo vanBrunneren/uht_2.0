@@ -1,0 +1,23 @@
+services:
+    mariadb:
+        container_name: uht-mariadb
+        image: mariadb:10.6
+        environment:
+            - "MARIADB_ALLOW_EMPTY_ROOT_PASSWORD=1"
+            - "MARIADB_DATABASE=uht"
+        ports:
+            - "3307:3306"
+        command:
+            - "--max_allowed_packet=512M"
+        volumes:
+            - "uht-mariadb-data:/var/lib/mysql"
+        networks:
+            - uht
+
+volumes:
+    uht-mariadb-data:
+        driver: local
+
+networks:
+    uht:
+        driver: bridge
