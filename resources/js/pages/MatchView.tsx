@@ -1,5 +1,9 @@
 import { useEffect, useState } from 'react';
 import axios from 'axios';
+import Button from '@mui/material/Button';
+import { ArrowRight } from 'lucide-react';
+import { Link } from '@inertiajs/react';
+import { getMinutes } from 'date-fns';
 
 interface Game {
     // Primary key
@@ -43,7 +47,7 @@ interface Team {
 
 const MatchView = ({ game }: { game: Game }) => {
 
-    const [timeLeft, setTimeLeft] = useState<number>(480);
+    const [timeLeft, setTimeLeft] = useState<number>(getMinutes(game.length) * 60);
     const [isRunning, setIsRunning] = useState<boolean>(false);
 
     // Game score state (initialized from game props)
@@ -55,7 +59,7 @@ const MatchView = ({ game }: { game: Game }) => {
 
         if (isRunning && timeLeft > 0) {
             timerId = setInterval(() => {
-                setTimeLeft(prev => prev - 1);
+                setTimeLeft((prev) => prev - 1);
             }, 1000);
         } else if (timeLeft === 0) {
             setIsRunning(false);
@@ -80,34 +84,34 @@ const MatchView = ({ game }: { game: Game }) => {
     const pauseTimer = () => setIsRunning(false);
     const resetTimer = () => {
         setIsRunning(false);
-        setTimeLeft(480); // Reset to 8 minutes
+        setTimeLeft(getMinutes(game.length) * 60);
     };
 
     // Time adjustment controls
     const addMinute = () => {
-        setTimeLeft(prev => prev + 60);
+        setTimeLeft((prev) => prev + 60);
     };
 
     const subtractMinute = () => {
-        setTimeLeft(prev => (prev >= 60) ? prev - 60 : prev);
+        setTimeLeft((prev) => (prev >= 60 ? prev - 60 : prev));
     };
 
     const addSecond = () => {
-        setTimeLeft(prev => prev + 1);
+        setTimeLeft((prev) => prev + 1);
     };
 
     const subtractSecond = () => {
-        setTimeLeft(prev => (prev > 0) ? prev - 1 : 0);
+        setTimeLeft((prev) => (prev > 0 ? prev - 1 : 0));
     };
 
     // Goal controls
     const addGoal = (team: 1 | 2) => {
         if (team === 1) {
-            setTeam1Goals(prev => prev + 1);
+            setTeam1Goals((prev) => prev + 1);
             // Optional: Send API request to update score in backend
             updateGoalInDatabase(game.id, 1, team1Goals + 1);
         } else {
-            setTeam2Goals(prev => prev + 1);
+            setTeam2Goals((prev) => prev + 1);
             // Optional: Send API request to update score in backend
             updateGoalInDatabase(game.id, 2, team2Goals + 1);
         }
@@ -115,86 +119,89 @@ const MatchView = ({ game }: { game: Game }) => {
 
     const removeGoal = (team: 1 | 2) => {
         if (team === 1 && team1Goals > 0) {
-            setTeam1Goals(prev => prev - 1);
+            setTeam1Goals((prev) => prev - 1);
             // Optional: Send API request to update score in backend
             updateGoalInDatabase(game.id, 1, team1Goals - 1);
         } else if (team === 2 && team2Goals > 0) {
-            setTeam2Goals(prev => prev - 1);
+            setTeam2Goals((prev) => prev - 1);
             // Optional: Send API request to update score in backend
             updateGoalInDatabase(game.id, 2, team2Goals - 1);
         }
     };
 
     const updateGoalInDatabase = (gameId: number, teamNumber: number, goals: number) => {
-        axios.post('/games/goal', {
-            game_id: gameId,
-            team_id: teamNumber,
-            goals: goals
-        })
-            .then(response => {
+        axios
+            .post('/games/goal', {
+                game_id: gameId,
+                team_id: teamNumber,
+                goals: goals,
+            })
+            .then((response) => {
                 console.log('Goal updated successfully', response.data);
             })
-            .catch(error => {
+            .catch((error) => {
                 console.error('Error updating goal:', error);
             });
     };
 
     return (
-        <div>
-            <h1>Match Timer</h1>
-
-            {/* Display the timer */}
-            <div className="timer">
+        <div className={'flex flex-col justify-center items-center'} style={{height: '100vh'}}>
+            <div className={'flex flex-row text-9xl'} style={{width: '100%'}}>
+                <div className={'flex flex-1 justify-end mx-24 text-7xl items-center'}>
+                    {game?.team1?.name}
+                </div>
+                <div className={'flex flex-row items-center'}>
+                    <div>{team1Goals}</div>
+                    <div>:</div>
+                    <div>{team2Goals}</div>
+                </div>
+                <div className={'flex flex-1 mx-24 text-7xl items-center'}>{game?.team2?.name}</div>
+            </div>
+            <div className={"flex flex-row match-score"}>
+                <div className={"team-score mr-8 text-4xl"}>
+                    <div className="score-display">
+                        <span className="score"></span>
+                        <div className="goal-controls">
+                            <button style={{cursor: 'pointer'}} onClick={() => addGoal(1)}>+</button>
+                            <button style={{cursor: 'pointer'}} onClick={() => removeGoal(1)}>-</button>
+                        </div>
+                    </div>
+                </div>
+                <div className={"team-score ml-8 text-4xl"}>
+                    <div className="score-display">
+                        <span className="score"></span>
+                        <div className="goal-controls">
+                            <button style={{cursor: 'pointer'}} onClick={() => addGoal(2)}>+</button>
+                            <button style={{cursor: 'pointer'}} onClick={() => removeGoal(2)}>-</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div className={'timer text-9xl mt-8'}>
                 <h2>{formatTime(timeLeft)}</h2>
             </div>
-
-            {/* Timer controls */}
-            <div className="controls">
-                {!isRunning ? (
-                    <button onClick={startTimer}>Start</button>
-                ) : (
-                    <button onClick={pauseTimer}>Pause</button>
-                )}
-                <button onClick={resetTimer}>Reset</button>
-            </div>
-
-            {/* Time adjustment controls */}
-            <div className="time-adjust">
-                <div className="minutes-controls">
-                    <button onClick={addMinute}>+1 Min</button>
-                    <button onClick={subtractMinute}>-1 Min</button>
+            <div className={"flex flex-row match-score mb-8"}>
+                <div className={"team-score mr-8 text-4xl"}>
+                    <button style={{cursor: 'pointer'}} onClick={addMinute}>+</button>
+                    <button style={{cursor: 'pointer'}} onClick={subtractMinute}>-</button>
                 </div>
-                <div className="seconds-controls">
-                    <button onClick={addSecond}>+1 Sec</button>
-                    <button onClick={subtractSecond}>-1 Sec</button>
+                <div className={"team-score ml-8 text-4xl"}>
+                    <button style={{cursor: 'pointer'}} onClick={addSecond}>+</button>
+                    <button style={{cursor: 'pointer'}} onClick={subtractSecond}>-</button>
                 </div>
             </div>
-
-            {/* Score display and controls */}
-            <div className="match-score">
-                <div className="team-score">
-                    <h3>{game?.team1?.name}</h3>
-                    <div className="score-display">
-                        <span className="score">{team1Goals}</span>
-                        <div className="goal-controls">
-                            <button onClick={() => addGoal(1)}>+</button>
-                            <button onClick={() => removeGoal(1)}>-</button>
-                        </div>
-                    </div>
+            <div className={"controls flex flex-row"}>
+                <div className={'mr-4'}>
+                    {!isRunning ? <Button variant={'contained'} onClick={startTimer}>Start</Button> : <Button variant={'contained'} onClick={pauseTimer}>Pause</Button>}
                 </div>
-
-                <div className="score-separator">:</div>
-
-                <div className="team-score">
-                    <h3>{game?.team2?.name}</h3>
-                    <div className="score-display">
-                        <span className="score">{team2Goals}</span>
-                        <div className="goal-controls">
-                            <button onClick={() => addGoal(2)}>+</button>
-                            <button onClick={() => removeGoal(2)}>-</button>
-                        </div>
-                    </div>
+                <div>
+                    <Button variant={'contained'} onClick={resetTimer}>Reset</Button>
                 </div>
+            </div>
+            <div className={'absolute right-8 bottom-8 cursor-pointer'}>
+                <Link href={`/matchview/${game.id + 1}`} className={'absolute right-8 bottom-8 cursor-pointer'}>
+                    <ArrowRight width={80} height={80} />
+                </Link>
             </div>
         </div>
     );
