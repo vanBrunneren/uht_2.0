@@ -104,7 +104,6 @@ const MatchView = ({ game }: { game: Game }) => {
         setTimeLeft((prev) => (prev > 0 ? prev - 1 : 0));
     };
 
-    // Goal controls
     const addGoal = (team: 1 | 2) => {
         if (team === 1) {
             setTeam1Goals((prev) => prev + 1);

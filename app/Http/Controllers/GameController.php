@@ -21,7 +21,7 @@ class GameController extends Controller
                 return $game;
             });
 
-        return Inertia::render('games', [
+        return Inertia::render('Games', [
             'games' => $games
         ]);
 
@@ -54,6 +54,29 @@ class GameController extends Controller
             'success' => true,
             'game' => $game->only(['id', 'team_1_goals', 'team_2_goals'])
         ]);
+    }
+
+    public function finishGame(Request $request) {
+
+        $validated = $request->validate([
+            'game_id' => 'required|integer|exists:games,id'
+        ]);
+
+        $game = Game::findOrFail($validated['game_id']);
+
+        if($game->finished) {
+            $game->finished = false;
+        } else {
+            $game->finished = true;
+        }
+
+        $game->save();
+
+        return response()->json([
+            'success' => true,
+            'game' => $game->only(['id', 'finished'])
+        ]);
+
     }
 
 }
