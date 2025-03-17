@@ -39,6 +39,7 @@ class GameController extends Controller
             ->whereHas('team1', function ($query) use ($categoryId) {
                 $query->where('category_id', $categoryId);
             })
+            ->orderBy('id', 'asc')
             ->get();
 
         return Inertia::render('Games', [

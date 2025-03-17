@@ -13,63 +13,13 @@ import { Fab } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 import GameDialog from '@/GameDialog';
 import { useState } from 'react';
-
-// Import or define the Team interface if needed
-export interface Team {
-    id: number;
-    name: string;
-    category_id: number;
-    groupid: number;
-    created_at: string | null;
-    updated_at: string | null;
-    deleted_at: string | null;
-    // Include other Team properties as needed
-}
-
-interface Game {
-    // Primary key
-    id: number;
-
-    // Foreign keys
-    team_1_id: number;
-    team_2_id: number;
-
-    // Game stats
-    team_1_goals: number;
-    team_2_goals: number;
-
-    // Time related fields
-    length: string; // Format: "HH:MM:SS"
-    start_datetime: string; // ISO format date string
-
-    // Status
-    finished: boolean;
-
-    // Timestamps
-    created_at: string | null;
-    updated_at: string | null;
-    deleted_at: string | null;
-
-    // Relationships (included when eager loaded)
-    team1?: Team;
-    team2?: Team;
-}
-
-// For use with Inertia or API responses where relationships might be included
-interface GameWithRelationships extends Game {
-    team1: Team;
-    team2: Team;
-}
-
-interface Category {
-    id: number;
-    name: string;
-    teams: Team[];
-    start_datetime: string;
-}
+import { Category } from '@/types/Category';
+import { Game } from '@/types/Game';
 
 export default function Games({ games, category }: { games: Game[]; category: Category | null }) {
     const [dialogOpen, setDialogOpen] = useState(false);
+
+    console.log(category);
 
     const updateGoalInDatabase = (gameId: number, teamNumber: number, goals: number) => {
         axios
@@ -121,6 +71,7 @@ export default function Games({ games, category }: { games: Game[]; category: Ca
                 teams={category?.teams}
                 startDateTime={category?.start_datetime}
                 onGameCreated={() => window.location.reload()}
+                defaultLength={category?.default_length}
             />
             <TableContainer component={Paper}>
                 <div className={'mt-4 mb-8 ml-4 text-4xl'}>{category?.name}</div>

@@ -25,19 +25,21 @@ export default function GameDialog({
    handleClose,
    teams,
    startDateTime,
-   onGameCreated
+   onGameCreated,
+    defaultLength
 }: {
     open: boolean;
     handleClose: () => void,
     teams: Team[] | undefined,
     startDateTime: string | undefined,
-    onGameCreated?: () => void  // Optional callback to refresh the games list
+    onGameCreated?: () => void,
+    defaultLength?: string
 }) {
 
     const [team1Id, setTeam1Id] = useState<number | null>(null);
     const [team2Id, setTeam2Id] = useState<number | null>(null);
     const [startDateTimeValue, setStartDateTimeValue] = useState<string | undefined>(startDateTime?.replace(":00.000000Z", ""));
-    const [length, setLength] = useState<string | undefined>("00:10:00");
+    const [length, setLength] = useState<string | undefined>(defaultLength);
     const [loading, setLoading] = useState<boolean>(false);
     const [error, setError] = useState<string | null>(null);
     const [showSuccess, setShowSuccess] = useState<boolean>(false);
@@ -66,7 +68,7 @@ export default function GameDialog({
                 team_2_id: team2Id,
                 team_1_goals: 0,
                 team_2_goals: 0,
-                length: `${length}`,  // Ensure seconds are included
+                length: `${length}:00`,  // Ensure seconds are included
                 start_datetime: new Date(startDateTimeValue).toISOString(),
                 finished: false
             };

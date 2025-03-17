@@ -16,11 +16,15 @@ class Category extends Model
 
     protected $fillable = [
         'name',
-        'start_datetime'
+        'start_datetime',
+        'active',
+        'default_length'
     ];
 
     protected $casts = [
-        'start_datetime' => 'datetime'
+        'start_datetime' => 'datetime',
+        'active' => 'boolean',
+        'default_length' => 'string'
     ];
 
     /**

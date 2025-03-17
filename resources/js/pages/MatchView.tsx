@@ -6,7 +6,7 @@ import { Link } from '@inertiajs/react';
 import { getMinutes } from 'date-fns';
 import { Game } from '@/types/Game';
 
-const MatchView = ({ game }: { game: Game }) => {
+const MatchView = ({ game, nextId }: { game: Game, nextId: number }) => {
 
     const [timeLeft, setTimeLeft] = useState<number>(getMinutes(game.length) * 60);
     const [isRunning, setIsRunning] = useState<boolean>(false);
@@ -162,7 +162,7 @@ const MatchView = ({ game }: { game: Game }) => {
                 <img src={'https://unihockey-team-brunegg.ch/wp-content/uploads/2021/12/highflyers_logo_quadratisch_ohne_schrift.png'} className={'h-60 mt-20'} />
             </div>
             <div className={'absolute right-8 bottom-8 cursor-pointer'}>
-                <Link href={`/matchview/${game.id + 1}`} className={'absolute right-8 bottom-8 cursor-pointer'}>
+                <Link href={`/matchview/${nextId}`} className={'absolute right-8 bottom-8 cursor-pointer'}>
                     <ArrowRight width={80} height={80} />
                 </Link>
             </div>
