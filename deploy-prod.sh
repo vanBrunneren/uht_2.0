@@ -16,7 +16,7 @@ composer install --optimize-autoloader --no-dev
 
 # Remote server details
 REMOTE_HOST="pascalbr@pascalbr.ssh.cloud.hostpoint.ch"
-SSH_KEY="~/.ssh/hostpoint_ssh"
+SSH_KEY="/Users/pascalbrunner/.ssh/hostpoint_ssh"
 REMOTE_DIR="www/test"
 
 # Folders to upload
