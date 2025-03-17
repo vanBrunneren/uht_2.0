@@ -138,4 +138,15 @@ class GameController extends Controller
         ]);
     }
 
+    public function getGamesByTeamId($teamId) {
+        $games = Game::with(['team1:id,name', 'team2:id,name'])
+            ->where('team_1_id', $teamId)
+            ->orWhere('team_2_id', $teamId)
+            ->get();
+
+        return Inertia::render('GamesByTeam', [
+            'games' => $games
+        ]);
+    }
+
 }

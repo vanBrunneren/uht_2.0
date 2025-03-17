@@ -4,46 +4,7 @@ import Button from '@mui/material/Button';
 import { ArrowRight } from 'lucide-react';
 import { Link } from '@inertiajs/react';
 import { getMinutes } from 'date-fns';
-
-interface Game {
-    // Primary key
-    id: number;
-
-    // Foreign keys
-    team_1_id: number;
-    team_2_id: number;
-
-    // Game stats
-    team_1_goals: number;
-    team_2_goals: number;
-
-    // Time related fields
-    length: string; // Format: "HH:MM:SS"
-    start_datetime: string; // ISO format date string
-
-    // Status
-    finished: boolean;
-
-    // Timestamps
-    created_at: string | null;
-    updated_at: string | null;
-    deleted_at: string | null;
-
-    // Relationships (included when eager loaded)
-    team1?: Team;
-    team2?: Team;
-}
-
-interface Team {
-    id: number;
-    name: string;
-    category_id: number;
-    groupid: number;
-    created_at: string | null;
-    updated_at: string | null;
-    deleted_at: string | null;
-    // Include other Team properties as needed
-}
+import { Game } from '@/types/Game';
 
 const MatchView = ({ game }: { game: Game }) => {
 
@@ -196,6 +157,9 @@ const MatchView = ({ game }: { game: Game }) => {
                 <div>
                     <Button variant={'contained'} onClick={resetTimer}>Reset</Button>
                 </div>
+            </div>
+            <div>
+                <img src={'https://unihockey-team-brunegg.ch/wp-content/uploads/2021/12/highflyers_logo_quadratisch_ohne_schrift.png'} className={'h-60 mt-20'} />
             </div>
             <div className={'absolute right-8 bottom-8 cursor-pointer'}>
                 <Link href={`/matchview/${game.id + 1}`} className={'absolute right-8 bottom-8 cursor-pointer'}>
